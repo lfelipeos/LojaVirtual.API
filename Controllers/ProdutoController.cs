@@ -29,6 +29,33 @@ public class ProdutoController : ControllerBase
         _context.Set<Produto>().Add(produto);
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction(nameof(ObterTodos), new { id = produto.Id }, produto);
+        return CreatedAtAction(nameof(ObterPorId), new { id = produto.Id }, produto);
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Deletar(int id)
+    {
+        var produto = await _context.Produtos.FindAsync(id);
+        if (produto == null)
+        {
+            return NotFound(new { message = "Produto não encontrado." });
+        }
+
+        _context.Produtos.Remove(produto);
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<Produto>> ObterPorId(int id)
+    {
+        var produto = await _context.Produtos.FindAsync(id);
+        if (produto == null)
+        {
+            return NotFound(new { message = "Produto não encontrado." });
+        }
+
+        return Ok(produto);
     }
 }
